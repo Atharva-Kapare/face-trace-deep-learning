@@ -4,6 +4,8 @@ import "../css/LandingPage.css";
 import { AwesomeButton } from "react-awesome-button";
 import "react-awesome-button/dist/styles.css";
 
+import { Link } from "react-router-dom";
+
 const Landingpage = () => {
   return (
     <div
@@ -18,13 +20,29 @@ const Landingpage = () => {
       }}
     >
       <h1>Welcome to FaceTrace</h1>
+      <Link to="/start_tracing">
+        <AwesomeButton
+          onPress={(next) => {
+            myFunc();
+          }}
+          type="primary"
+          style={myButtonStyle}
+        >
+          Start Tracing
+        </AwesomeButton>
+      </Link>
 
-      <AwesomeButton onPress={(next) => {myFunc();}} type="primary" style={myButtonStyle} >
-        Start Tracing
-      </AwesomeButton>
-      <AwesomeButton onPress={(next) => {myFunc();}} type="secondary" style={myButtonStyle} >
-        Detect Faces
-      </AwesomeButton>
+      <Link to="/detect_faces">
+        <AwesomeButton
+          onPress={(next) => {
+            myFunc();
+          }}
+          type="secondary"
+          style={myButtonStyle}
+        >
+          Detect Faces
+        </AwesomeButton>
+      </Link>
     </div>
   );
 };
@@ -32,7 +50,6 @@ const Landingpage = () => {
 function myFunc() {
   console.log("Hello");
 }
-
 
 const myButtonStyle = {
   width: "25vw",
