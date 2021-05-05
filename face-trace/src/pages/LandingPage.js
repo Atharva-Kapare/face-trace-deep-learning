@@ -27,6 +27,7 @@ const Landingpage = () => {
           }}
           type="primary"
           style={myButtonStyle}
+          ripple
         >
           Start Tracing
         </AwesomeButton>

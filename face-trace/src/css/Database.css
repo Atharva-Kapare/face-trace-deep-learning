@@ -1,0 +1,10 @@
+
+.dataset {
+  min-height: 50vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.imageDiv {
+  padding-left: 15px;
+}

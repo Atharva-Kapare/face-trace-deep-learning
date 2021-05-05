@@ -1,11 +1,29 @@
+import "../css/DetectFaces.css";
 
+export const DetectFaces = () => {
+  return (
+    <div className="maindiv">
+      <h1>Detect Faces</h1>
+      <div className="mainContent">
+        <input
+          type="file"
+          id="file-selector"
+          accept="image/png, image/jpeg"
+          onChange={(e) => captureFile(e)}
+        />
+        <input type="submit" onClick={(e) => onSubmit(e)}/>
+      </div>
+    </div>
+  );
+};
 
-const DetectFaces = () => {
-    return (
-        <div>
-            <h1>Detect Faces page</h1>
-        </div>
-    )
+function captureFile(e) {
+  console.log(e.target.files[0]);
+  const file = e.target.files[0];
 }
 
-export default DetectFaces
+function onSubmit(e){
+  console.log(e);
+}
+
+export default DetectFaces;
