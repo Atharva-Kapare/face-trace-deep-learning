@@ -100,8 +100,12 @@ const StartTracing = () => {
     <>
       <div className="maindiv">
         <h1 className="temp">Start Tracing</h1>
-        <div>
-          <Database images={images} />
+        <div>{
+          images.map((image) => (
+
+            <Database image={image}/>
+          ))
+          }
         </div>
         <div className="mainContent">
           <div className="inputfields">

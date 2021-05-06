@@ -1,10 +1,12 @@
 
-.dataset {
-  min-height: 50vh;
-  display: flex;
-  flex-direction: column;
+.container {
+  flex-direction: row;
 }
 
-.imageDiv {
-  padding-left: 15px;
+#dataset {
+  display: flex;
+}
+
+#imageDiv{
+  justify-content:right;
 }
