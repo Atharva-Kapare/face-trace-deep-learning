@@ -10,7 +10,7 @@ class Database extends Component {
                 {this.props.images.map((img) => (
                     <>
                         <div key={img.name} className="imageDiv">
-                            <img src={img.image}></img>
+                            <img src={img.image} alt="test"></img>
                             <p>{img.name}</p>
                         </div>
                     </>

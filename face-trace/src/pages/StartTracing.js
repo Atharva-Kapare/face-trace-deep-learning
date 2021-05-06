@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useState, useEffect } from "react";
 
 
 import { AwesomeButton } from "react-awesome-button";
@@ -12,137 +12,144 @@ import firebase from "../firebase"
 
 var db = firebase.firestore();
 
-var images = [];
-db.collection("images").onSnapshot((querySnapshot) => {
-  images.length = 0;
-  querySnapshot.forEach((doc) => {
-    images.push(doc.data());
-  });
-})
 
-class StartTracing extends Component {
-  constructor(props) {
-    super(props);
 
-    this.state = {
-      image: "",
-      name: "",
-      target: ""
-    };
 
+const StartTracing = () => {
+
+  const [images, setImages] = useState([]);
+  const [name, setName] = useState("");
+  const [target, setTarget] = useState("");
+  const [imageSrc, setImageSrc] = useState("");
+
+
+  useEffect(() => {
+    // Run! Like go get some data from an API.
     db.collection("images").get().then((querySnapshot) => {
       images.length = 0;
       querySnapshot.forEach((doc) => {
-          images.push(doc.data());
+        setImages(oldArray => [...oldArray, doc.data()]);
       });
     });
-  
+  }, []);
 
 
-      this.captureFile = this.captureFile.bind(this);
-      this.addToDatabase = this.addToDatabase.bind(this);
-      this.updateFields = this.updateFields.bind(this);
-      this.getPathToImage = this.getPathToImage.bind(this);
-    }
-  
+  // function updateFieldName(e) {
+  //   var nameField = e.target.value;
+  //   setName(nameField);
 
-  captureFile(e) {
-      const file = e.target.files[0];
+  //   console.log(name);
 
-      if(file) {
-        const reader = new FileReader();
+  //   //this.setState({ target: tagField });
+  // }  
+  // function updateFieldTarget(e) {
+  //   var tagField = e.target.value;
+  //   setName(tagField);
 
-        reader.readAsDataURL(file);
-        reader.onloadend = () => {
-          this.setState({ image: reader.result });
-          console.log(this.state.image);
-        };
-      }
-    console.log(this.state.image);
-    }
+  //   console.log(tagField);
+  // }
 
-  updateFields() {
-      var nameField = document.getElementById("nameField").value;
-      this.setState({ name: nameField });
-      var tagField = document.getElementById("tagField").value;
-      this.setState({ target: tagField });
-    }
+  function getPathToImage() {
+    var name1 = document.getElementById("nameField").value;
+    var target1 = document.getElementById("tagField").value;
 
 
-  addToDatabase() {
-      var path = this.getPathToImage(this.state.name, this.state.target);
+    var Name = name1.replace(/\s/g, '');
+    var target = target1.replace(/\s/g, '');
 
-      db.collection("images").doc(path).set({
-        image: this.state.image,
-        name: this.state.name,
-        target: this.state.target
-      }).then(() => {
-        console.log("Document successfully written!");
+    setName(name1);
+    setTarget(target1);
 
-      }).catch((error) => {
-        console.warn(error);
-      });
-      console.log(images);
+    return Name + "____" + target;
+  }
+
+  function addToDatabase() {
+    var path = getPathToImage();
+    var myObj = {
+      image: imageSrc,
+      name: document.getElementById("nameField").value,
+      target: document.getElementById("tagField").value
     }
 
-  getPathToImage(name1, target1) {
-      var Name = name1.replace(/\s/g, '');
-      var target = target1.replace(/\s/g, '');
+    db.collection("images").doc(path).set(
+      myObj
+    ).then(() => {
+      console.log("Document successfully written!");
+      setImages(oldArray => [...oldArray, myObj]);
+    }).catch((error) => {
+      console.warn(error);
+    });
+  }
 
-      return Name + "____" + target;
+  function captureFile(e) {
+    const file = e.target.files[0];
+
+    if (file) {
+      const reader = new FileReader();
+
+      reader.readAsDataURL(file);
+      reader.onloadend = () => {
+        setImageSrc(reader.result);
+      };
     }
+  }
 
-  render() {
-      return(
-      <>
-    <div className="maindiv">
-      <h1 className="temp">Start Tracing</h1>
-      <div>
-        <Database images={images} />
-      </div>
-      <div className="mainContent">
-        <div className="inputfields">
-          <div>
-            <input
-              type="file"
-              id="imageField"
-              accept="image/png, image/jpeg"
-              onChange={this.captureFile}
-            />
+
+
+  return (
+    <>
+      <div className="maindiv">
+        <h1 className="temp">Start Tracing</h1>
+        <div>
+          <Database images={images} />
+        </div>
+        <div className="mainContent">
+          <div className="inputfields">
+            <div>
+              <input
+                type="file"
+                id="imageField"
+                accept="image/png, image/jpeg"
+                onChange={(e) => captureFile(e)}
+              />
+            </div>
+            <br />
+            <div>
+              <label>Name: </label>
+              <input
+                id="nameField"
+                type="text"
+                placeholder="Type their name here"
+              />
+            </div>
+            <br />
+            <div>
+              <label>Enter a Tag:</label>
+              <input
+                id="tagField"
+                type="text"
+                placeholder="For eg resident or robber"
+              />
+            </div>
+            <br />
+            <AwesomeButton onPress={() => {
+              addToDatabase();
+            }}
+              type="secondary"
+              style={myButtonStyle}>Submit</AwesomeButton>
           </div>
-          <br />
-          <div>
-            <label>Name: </label>
-            <input
-              id="nameField"
-              type="text"
-              placeholder="Type their name here"
-              onChange={this.updateFields}
-            />
-          </div>
-          <br />
-          <div>
-            <label>Enter a Tag:</label>
-            <input
-              id="tagField"
-              type="text"
-              placeholder="For eg resident or robber"
-              onChange={this.updateFields}
-            />
-          </div>
-          <br />
-          <AwesomeButton onPress={(next) => {
-            this.addToDatabase();
-          }}
-            type="secondary"
-            style={myButtonStyle}>Submit</AwesomeButton>
         </div>
       </div>
-    </div>
-      </>
-    );
-  }
+    </>
+  );
 }
+
+
+
+
+
+
+
 
 
 
@@ -156,5 +163,6 @@ const myButtonStyle = {
   height: "5vh",
   fontSize: "100%",
 };
+
 
 export default StartTracing;
